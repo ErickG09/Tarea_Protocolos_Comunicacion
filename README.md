@@ -142,9 +142,17 @@ Los mensajes MCP del sistema siempre tienen esta forma:
 
 ```json
 {
-  "type": "ACTION_NAME",
-  "payload": { ... }
+  "id": "uuid",
+  "performative": "REQUEST | INFORM",
+  "sender": "...",
+  "receiver": "...",
+  "protocols": ["A2A", "ACP", "AG_UI", "MCP"],
+  "content": {
+    "type": "ACTION_NAME",
+    "payload": { }
+  }
 }
+```
 
 Ejemplos reales:
 
