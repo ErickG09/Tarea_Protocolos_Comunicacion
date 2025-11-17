@@ -1,0 +1,41 @@
+# ============================================
+#   .gitignore para proyecto AGENTESPROTOCOLOPROYECTO
+# ============================================
+
+# Entorno virtual de Python
+venv/
+ENV/
+env/
+.venv/
+
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de configuración locales / IDE
+.vscode/
+.idea/
+*.iml
+
+# Archivos de logs
+logs/
+*.log
+
+# Base de datos local (se puede regenerar)
+data/hospital.db
+
+# Variables de entorno sensibles
+.env
+
+# Archivos temporales del sistema operativo / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+~$*
+
+# Reportes de pytest / cobertura (por si se agregan tests)
+.pytest_cache/
+.coverage
+htmlcov/

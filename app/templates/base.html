@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %}Gestor de Cirugías Multitagente{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="topbar-brand">
+          <div class="logo-circle">HC</div>
+          <div>
+            <div class="topbar-title">Hospital Central</div>
+            <div class="topbar-subtitle">Gestor de cirugías multitagente</div>
+          </div>
+        </div>
+        <nav class="topbar-nav">
+          <a href="/" class="topbar-link">Dashboard</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="layout">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <span>Sistema académico de simulación de protocolos de comunicación multiagente.</span>
+      </div>
+    </footer>
+  </body>
+</html>

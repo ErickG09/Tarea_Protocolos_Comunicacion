@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestor de Cirugías Multitagente</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', path='main.css') }}">
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header-left">
+      <h1 class="app-title">Gestor de Cirugías Multitagente</h1>
+      <p class="app-subtitle">
+        Planificador · Ejecutor · Monitor · Notificador
+      </p>
+    </div>
+    <div class="app-header-right">
+      <span class="env-badge">
+        Entorno: {{ app_env }}
+      </span>
+      {% if gemini_configured %}
+      <span class="status-badge status-ok">
+        IA (Gemini) activa
+      </span>
+      {% else %}
+      <span class="status-badge status-warn">
+        IA (Gemini) desactivada
+      </span>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="app-main">
+    <section class="grid">
+      <!-- Columna izquierda: Formulario nuevo caso -->
+      <section class="card">
+        <h2 class="card-title">Nuevo caso de cirugía</h2>
+        <p class="card-subtitle">
+          Registra un nuevo procedimiento para que el Planificador genere
+          automáticamente el plan quirúrgico detallado.
+        </p>
+
+        <form method="post" action="/cases" class="form">
+          <div class="form-group">
+            <label for="patient_name">Nombre del paciente</label>
+            <input
+              type="text"
+              id="patient_name"
+              name="patient_name"
+              required
+              placeholder="Ej. María López"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="procedure_name">Procedimiento quirúrgico</label>
+            <input
+              type="text"
+              id="procedure_name"
+              name="procedure_name"
+              required
+              list="procedure_suggestions"
+              placeholder="Ej. Colecistectomía laparoscópica"
+            />
+            <datalist id="procedure_suggestions">
+              <option value="Apendicectomía laparoscópica"></option>
+              <option value="Colecistectomía laparoscópica"></option>
+              <option value="Reemplazo total de rodilla derecha"></option>
+              <option value="Reemplazo total de cadera"></option>
+              <option value="Reconstrucción de ligamento cruzado anterior (LCA)"></option>
+              <option value="Histerectomía laparoscópica"></option>
+              <option value="Cesárea programada"></option>
+              <option value="Nefrectomía parcial laparoscópica"></option>
+              <option value="Bypass coronario (CABG)"></option>
+              <option value="Cirugía de tumor cerebral"></option>
+            </datalist>
+            <small class="help-text">
+              Puedes escribir libremente o elegir uno de los ejemplos sugeridos.
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="priority">Prioridad</label>
+            <select id="priority" name="priority" required>
+              <option value="elective">Electiva</option>
+              <option value="urgent">Urgente</option>
+              <option value="emergency">Emergencia</option>
+            </select>
+          </div>
+
+          <!-- Mejor input de fecha/hora con presets -->
+          <div class="form-group">
+            <label for="requested_datetime">Fecha y hora solicitadas</label>
+            <input
+              type="datetime-local"
+              id="requested_datetime"
+              name="requested_datetime"
+              required
+            />
+            <div class="preset-row">
+              <button type="button" class="btn-chip" data-offset-hours="1">
+                +1 h desde ahora
+              </button>
+              <button type="button" class="btn-chip" data-today-hour="8">
+                Hoy 08:00
+              </button>
+              <button type="button" class="btn-chip" data-today-hour="12">
+                Hoy 12:00
+              </button>
+              <button type="button" class="btn-chip" data-today-hour="16">
+                Hoy 16:00
+              </button>
+              <button type="button" class="btn-chip" data-tomorrow-hour="8">
+                Mañana 08:00
+              </button>
+            </div>
+            <small class="help-text">
+              Usa los botones rápidos o ajusta la fecha/hora manualmente.
+            </small>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">
+              Crear caso y generar plan
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Columna derecha: Dashboard / Resumen -->
+      <section class="card">
+        <h2 class="card-title">Estado del sistema</h2>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Casos registrados</div>
+            <div class="stat-value">
+              {{ snapshot.get("cases_total", cases|length) }}
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Tareas totales</div>
+            <div class="stat-value">
+              {{ snapshot.get("tasks_total", 0) }}
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Quirófanos</div>
+            <div class="stat-value">
+              {{ snapshot.get("or_rooms_total", 5) }}
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Última actualización</div>
+            <div class="stat-value stat-small">
+              {{ snapshot.get("timestamp", "N/D") }}
+            </div>
+          </div>
+        </div>
+
+        <h3 class="section-subtitle">Casos por estado</h3>
+        <div class="chips-row">
+          {% set by_status = snapshot.get("cases_by_status", {}) %}
+          <span class="chip chip-status">
+            planned: {{ by_status.get("planned", 0) }}
+          </span>
+          <span class="chip chip-status">
+            in_progress: {{ by_status.get("in_progress", 0) }}
+          </span>
+          <span class="chip chip-status">
+            completed: {{ by_status.get("completed", 0) }}
+          </span>
+        </div>
+
+        <h3 class="section-subtitle">Últimas notificaciones</h3>
+        <ul class="notification-list">
+          {% if notifications %}
+            {% for note in notifications %}
+            <li class="notification-item">
+              {# Caso 1: objeto con atributo timestamp (Notification dataclass, por ejemplo) #}
+              {% if note.timestamp is defined %}
+                <div class="notification-time">
+                  {{ note.timestamp }}
+                </div>
+                {% if note.message is defined %}
+                <div class="notification-message">
+                  {{ note.message }}
+                </div>
+                {% else %}
+                <div class="notification-message">
+                  {{ note }}
+                </div>
+                {% endif %}
+              {% else %}
+              {# Caso 2: notificación simple (string o algo sin timestamp) #}
+                <div class="notification-message">
+                  {{ note }}
+                </div>
+              {% endif %}
+            </li>
+            {% endfor %}
+          {% else %}
+            <li class="notification-empty">
+              No hay notificaciones registradas aún.
+            </li>
+          {% endif %}
+        </ul>
+      </section>
+    </section>
+
+    <!-- Tabla de casos -->
+    <section class="card">
+      <h2 class="card-title">Casos registrados</h2>
+      {% if cases %}
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Id caso</th>
+              <th>Paciente</th>
+              <th>Procedimiento</th>
+              <th>Prioridad</th>
+              <th>Estado</th>
+              <th>Fecha solicitada</th>
+              <th>Quirófano</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for case in cases %}
+            {% set first_or = (case.tasks[0].or_room_id if case.tasks and case.tasks[0].or_room_id else "Sin asignar") %}
+            <tr>
+              <td class="mono">{{ case.id }}</td>
+              <td>{{ case.patient_name }}</td>
+              <td>{{ case.procedure_name }}</td>
+              <td>{{ case.priority.value }}</td>
+              <td>
+                <span class="status-pill status-{{ case.status.value }}">
+                  {{ case.status.value }}
+                </span>
+              </td>
+              <td class="mono">
+                {{ case.requested_datetime.strftime("%Y-%m-%d %H:%M") if case.requested_datetime else "" }}
+              </td>
+              <td class="mono">
+                {{ first_or }}
+              </td>
+              <td class="text-right">
+                <a href="/cases/{{ case.id }}" class="btn-link">
+                  Ver detalle
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="empty-state">
+        No hay casos registrados todavía. Crea uno desde el formulario de la izquierda.
+      </p>
+      {% endif %}
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Gestor de Cirugías Multitagente · Proyecto académico · {{ app_env }}</p>
+  </footer>
+
+  <!-- JS simple para presets de fecha/hora -->
+  <script>
+    (function () {
+      const input = document.getElementById("requested_datetime");
+      const pad = (n) => n.toString().padStart(2, "0");
+
+      function setDateTime(d) {
+        const value =
+          d.getFullYear() +
+          "-" +
+          pad(d.getMonth() + 1) +
+          "-" +
+          pad(d.getDate()) +
+          "T" +
+          pad(d.getHours()) +
+          ":" +
+          pad(d.getMinutes());
+        if (input) {
+          input.value = value;
+        }
+      }
+
+      // Prefill: ahora + 1h si no hay valor
+      if (input && !input.value) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() + 60);
+        now.setSeconds(0, 0);
+        setDateTime(now);
+      }
+
+      // Botones tipo chip
+      const chips = document.querySelectorAll(".btn-chip");
+      chips.forEach((chip) => {
+        chip.addEventListener("click", () => {
+          const now = new Date();
+          now.setSeconds(0, 0);
+
+          if (chip.dataset.offsetHours) {
+            const offset = parseInt(chip.dataset.offsetHours, 10);
+            now.setHours(now.getHours() + offset);
+            setDateTime(now);
+          } else if (chip.dataset.todayHour) {
+            now.setHours(parseInt(chip.dataset.todayHour, 10), 0, 0, 0);
+            setDateTime(now);
+          } else if (chip.dataset.tomorrowHour) {
+            now.setDate(now.getDate() + 1);
+            now.setHours(parseInt(chip.dataset.tomorrowHour, 10), 0, 0, 0);
+            setDateTime(now);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
