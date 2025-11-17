@@ -562,46 +562,47 @@ En conjunto, el proyecto cumple completamente con los requerimientos académicos
 
 El proyecto está organizado siguiendo una arquitectura clara y modular, lo que facilita su mantenimiento, comprensión y ampliación futura. A continuación se listan los archivos y directorios que conforman la solución:
 
+```text
 AGENTESPROTOCOLOPROYECTO/
 │
 ├── app/
-│ ├── pycache/ # Caché generado por Python
-│ │
-│ ├── agents/ # Implementación de los agentes del sistema
-│ │ ├── pycache/
-│ │ ├── init.py
-│ │ ├── base.py # Clase base común para todos los agentes
-│ │ ├── bus.py # Message Bus interno: envío/recepción ACP + A2A
-│ │ ├── executor.py # Ejecutor: asigna quirófano y actualiza estados
-│ │ ├── knowledge_base.py # Base de Conocimiento (SQLite + queries)
-│ │ ├── monitor.py # Monitor: genera snapshot global del sistema
-│ │ ├── notifier.py # Notificador: registra eventos importantes
-│ │ └── planner.py # Planificador: genera subtareas (Gemini 2.5)
-│ │
-│ ├── static/
-│ │ └── main.css # Estilos completos de la interfaz (UI)
-│ │
-│ ├── templates/ # Vistas HTML renderizadas con Jinja2
-│ │ ├── base.html # Layout principal de la aplicación
-│ │ ├── case_detail.html # Vista de detalle de cada caso quirúrgico
-│ │ └── index.html # Vista principal y dashboard del hospital
-│ │
-│ ├── init.py
-│ ├── ai_adapter.py # Adaptador para modelos Gemini 2.5
-│ ├── config.py # Configuraciones globales + logging + .env
-│ ├── main.py # Rutas FastAPI + lógica de UI + endpoints API
-│ ├── models.py # Entidades, Pydantic y estructuras del dominio
-│ └── protocols.py # Implementación AG-UI, A2A, ACP, MCP
+│   ├── __pycache__/                     # Caché generado por Python
+│   │
+│   ├── agents/                          # Implementación de los agentes del sistema
+│   │   ├── __pycache__/
+│   │   ├── __init__.py
+│   │   ├── base.py                      # Clase base común para todos los agentes
+│   │   ├── bus.py                       # Message Bus interno: envío/recepción ACP + A2A
+│   │   ├── executor.py                  # Ejecutor: asigna quirófano y actualiza estados
+│   │   ├── knowledge_base.py            # Base de Conocimiento (SQLite + queries)
+│   │   ├── monitor.py                   # Monitor: genera snapshot global del sistema
+│   │   ├── notifier.py                  # Notificador: registra eventos importantes
+│   │   └── planner.py                   # Planificador: genera subtareas (Gemini 2.5)
+│   │
+│   ├── static/
+│   │   └── main.css                     # Estilos completos de la interfaz (UI)
+│   │
+│   ├── templates/                       # Vistas HTML renderizadas con Jinja2
+│   │   ├── base.html                    # Layout principal de la aplicación
+│   │   ├── case_detail.html             # Vista de detalle de cada caso quirúrgico
+│   │   └── index.html                   # Vista principal y dashboard del hospital
+│   │
+│   ├── __init__.py
+│   ├── ai_adapter.py                    # Adaptador para modelos Gemini 2.5
+│   ├── config.py                        # Configuraciones globales + logging + .env
+│   ├── main.py                          # Rutas FastAPI + lógica de UI + endpoints API
+│   ├── models.py                        # Entidades, Pydantic y estructuras del dominio
+│   └── protocols.py                     # Implementación AG-UI, A2A, ACP, MCP
 │
 ├── data/
-│ └── hospital.db # Base de datos SQLite persistente
+│   └── hospital.db                      # Base de datos SQLite persistente
 │
 ├── logs/
-│ └── app.log # Bitácora del sistema multiagente
+│   └── app.log                          # Bitácora del sistema multiagente
 │
-├── venv/ # Entorno virtual con dependencias
+├── venv/                                # Entorno virtual con dependencias
 │
-├── .env # Variables de entorno (incluye GEMINI_API_KEY)
-└── requirements.txt # Lista de dependencias del proyecto
+├── .env                                 # Variables de entorno (incluye GEMINI_API_KEY)
+└── requirements.txt                     # Lista de dependencias del proyecto
 
-
+``` 
