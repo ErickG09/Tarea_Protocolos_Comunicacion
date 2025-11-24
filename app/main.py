@@ -9,7 +9,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from .config import get_settings, configure_logging
+from .config import get_settings, configure_logging, read_log_entries
 from .agents import get_agent_context
 from .models import NewCaseInput
 from .protocols import (
@@ -109,6 +109,25 @@ async def index(request: Request):
             "cases": cases,
             "snapshot": snapshot,
             "notifications": last_notifications,
+        },
+    )
+
+@app.get("/logs", response_class=HTMLResponse, tags=["ui"])
+async def logs_view(request: Request):
+    """
+    Vista de sólo lectura del archivo de logs.
+
+    Muestra las últimas N entradas del archivo logs/app.log en la UI.
+    """
+    log_entries = read_log_entries(limit=500)
+
+    return templates.TemplateResponse(
+        "logs.html",
+        {
+            "request": request,
+            "app_env": settings.app_env,
+            "gemini_configured": settings.gemini_api_key is not None,
+            "log_entries": log_entries,
         },
     )
 

@@ -3,32 +3,58 @@
   <head>
     <meta charset="utf-8" />
     <title>{% block title %}Gestor de Cirugías Multitagente{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="{{ request.url_for('static', path='main.css') }}">
   </head>
-  <body>
+  <body class="app-body">
+    <!-- Barra superior global -->
     <header class="topbar">
       <div class="topbar-inner">
         <div class="topbar-brand">
           <div class="logo-circle">HC</div>
-          <div>
+          <div class="topbar-brand-text">
             <div class="topbar-title">Hospital Central</div>
             <div class="topbar-subtitle">Gestor de cirugías multitagente</div>
           </div>
         </div>
+
         <nav class="topbar-nav">
-          <a href="/" class="topbar-link">Dashboard</a>
+          <a
+            href="/"
+            class="topbar-link {% if request.url.path == '/' %}is-active{% endif %}"
+          >
+            Dashboard
+          </a>
+          <a
+            href="/logs"
+            class="topbar-link {% if request.url.path.startswith('/logs') %}is-active{% endif %}"
+          >
+            Logs del sistema
+          </a>
         </nav>
       </div>
     </header>
 
-    <main class="layout">
+    <!-- Contenido principal de cada vista -->
+    <main class="layout app-main">
       {% block content %}{% endblock %}
     </main>
 
-    <footer class="footer">
+    <!-- Pie de página global -->
+    <footer class="app-footer footer">
       <div class="footer-inner">
-        <span>Sistema académico de simulación de protocolos de comunicación multiagente.</span>
+        <span>
+          Sistema académico de simulación de protocolos de comunicación multiagente.
+        </span>
+        <span class="footer-meta">
+          {% if app_env is defined %}
+            Entorno: <strong>{{ app_env }}</strong>
+          {% endif %}
+          {% if gemini_configured is defined %}
+            · IA (Gemini):
+            <strong>{{ 'activa' if gemini_configured else 'desactivada' }}</strong>
+          {% endif %}
+        </span>
       </div>
     </footer>
   </body>

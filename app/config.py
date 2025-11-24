@@ -1,10 +1,10 @@
 from pathlib import Path
 import logging
 from logging.handlers import RotatingFileHandler
-from typing import Optional
+from typing import Optional, List, Dict
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
+import re
 
 class Settings(BaseSettings):
     """
@@ -89,3 +89,61 @@ def configure_logging() -> logging.Logger:
 
     _logger = logger
     return logger
+
+def get_log_file_path() -> Path:
+    """
+    Devuelve la ruta al archivo principal de logs (logs/app.log).
+    """
+    log_dir = Path("logs")
+    return log_dir / "app.log"
+
+
+def read_log_entries(limit: int = 500) -> List[Dict[str, str]]:
+    """
+    Lee el archivo de logs y devuelve una lista de entradas parseadas.
+
+    Cada entrada tiene:
+        - timestamp: str
+        - level: str
+        - message: str
+    """
+    log_file = get_log_file_path()
+    entries: List[Dict[str, str]] = []
+
+    if not log_file.exists():
+        return entries
+
+    # Leemos sólo las últimas `limit` líneas para no saturar la UI
+    with log_file.open("r", encoding="utf-8") as f:
+        lines = f.readlines()[-limit:]
+
+    pattern = re.compile(
+        r"\[(?P<timestamp>[^\]]+)\]\s+\[(?P<level>[^\]]+)\]\s+(?P<logger>[^-]+)-\s+(?P<message>.*)"
+    )
+
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+
+        match = pattern.match(line)
+        if not match:
+            # Si no coincide el formato por alguna razón, mostramos la línea cruda.
+            entries.append(
+                {
+                    "timestamp": "",
+                    "level": "INFO",
+                    "message": line,
+                }
+            )
+            continue
+
+        entries.append(
+            {
+                "timestamp": match.group("timestamp"),
+                "level": match.group("level"),
+                "message": match.group("message"),
+            }
+        )
+
+    return entries

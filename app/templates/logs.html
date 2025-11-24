@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Logs del sistema · Gestor de Cirugías{% endblock %}
+
+{% block content %}
+  <!-- Encabezado de página -->
+  <section class="page-header">
+    <div>
+      <h1 class="page-title">Monitor de logs del sistema</h1>
+      <p class="page-subtitle">
+        Vista de sólo lectura del archivo de logs para seguimiento y depuración.
+      </p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-header-row">
+      <h2 class="card-title">Actividad reciente</h2>
+      <div class="log-filters">
+        <button class="btn-chip log-filter is-active" data-level="ALL">Todos</button>
+        <button class="btn-chip log-filter" data-level="INFO">Info</button>
+        <button class="btn-chip log-filter" data-level="WARNING">Warning</button>
+        <button class="btn-chip log-filter" data-level="ERROR">Error</button>
+      </div>
+    </div>
+
+    {% if log_entries and log_entries|length > 0 %}
+    <div class="log-viewer">
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th class="col-time">Fecha y hora</th>
+            <th class="col-level">Nivel</th>
+            <th class="col-message">Mensaje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in log_entries %}
+          <tr
+            class="log-row"
+            data-level="{{ entry.level | upper }}"
+          >
+            <td class="mono">{{ entry.timestamp }}</td>
+            <td class="log-level log-level-{{ entry.level | lower }}">
+              {{ entry.level }}
+            </td>
+            <td class="log-message">
+              {{ entry.message }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="empty-state">
+      No se encontraron registros en el log para mostrar.
+    </p>
+    {% endif %}
+  </section>
+
+  <script>
+    // Filtro muy simple de logs por nivel (solo front-end)
+    (function () {
+      const buttons = document.querySelectorAll(".log-filter");
+      const rows = document.querySelectorAll(".log-row");
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const level = btn.dataset.level;
+          buttons.forEach((b) => b.classList.remove("is-active"));
+          btn.classList.add("is-active");
+
+          rows.forEach((row) => {
+            const rowLevel = row.dataset.level;
+            if (level === "ALL" || rowLevel === level) {
+              row.style.display = "";
+            } else {
+              row.style.display = "none";
+            }
+          });
+        });
+      });
+    })();
+  </script>
+{% endblock %}

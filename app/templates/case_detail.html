@@ -1,161 +1,151 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <title>Detalle de caso · {{ case.id }}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="{{ url_for('static', path='main.css') }}">
-</head>
-<body>
-  <header class="app-header">
-    <div class="app-header-left">
-      <h1 class="app-title">Detalle del caso</h1>
-      <p class="app-subtitle mono">
+{% extends "base.html" %}
+
+{% block title %}Detalle de caso · {{ case.id }}{% endblock %}
+
+{% block content %}
+  <!-- Encabezado de página -->
+  <section class="page-header">
+    <div>
+      <h1 class="page-title">Caso de cirugía</h1>
+      <p class="page-subtitle mono">
         {{ case.id }}
       </p>
     </div>
-    <div class="app-header-right">
+    <div class="page-header-right">
       <span class="status-pill status-{{ case.status.value }}">
         {{ case.status.value }}
       </span>
     </div>
-  </header>
+  </section>
 
-  <main class="app-main">
-    <section class="grid grid-detail">
-      <!-- Resumen del caso -->
-      <section class="card">
-        <h2 class="card-title">Información del caso</h2>
-
-        <dl class="detail-list">
-          <div class="detail-row">
-            <dt>Paciente</dt>
-            <dd>{{ case.patient_name }}</dd>
-          </div>
-          <div class="detail-row">
-            <dt>Procedimiento</dt>
-            <dd>{{ case.procedure_name }}</dd>
-          </div>
-          <div class="detail-row">
-            <dt>Prioridad</dt>
-            <dd>{{ case.priority.value }}</dd>
-          </div>
-          <div class="detail-row">
-            <dt>Fecha/hora solicitada</dt>
-            <dd class="mono">
-              {{ case.requested_datetime.strftime("%Y-%m-%d %H:%M") if case.requested_datetime else "" }}
-            </dd>
-          </div>
-          <div class="detail-row">
-            <dt>Creado</dt>
-            <dd class="mono">
-              {{ case.created_at.strftime("%Y-%m-%d %H:%M") if case.created_at else "" }}
-            </dd>
-          </div>
-          <div class="detail-row">
-            <dt>Última actualización</dt>
-            <dd class="mono">
-              {{ case.updated_at.strftime("%Y-%m-%d %H:%M") if case.updated_at else "" }}
-            </dd>
-          </div>
-        </dl>
-      </section>
-
-      <!-- Acciones -->
-      <section class="card">
-        <h2 class="card-title">Acciones sobre el caso</h2>
-        <p class="card-subtitle">
-          Controla la programación del quirófano y gestiona el caso durante el ciclo perioperatorio.
-        </p>
-
-        <div class="space-y">
-          {% if has_unassigned_tasks %}
-          <form method="post" action="/cases/{{ case.id }}/schedule" class="form">
-            <button type="submit" class="btn-primary w-full">
-              Programar en quirófano
-            </button>
-          </form>
-          {% else %}
-          <p class="info-text">
-            Todas las subtareas tienen quirófano asignado. El Monitor actualizará
-            los estados conforme avance el tiempo.
-          </p>
-          {% endif %}
-
-          <a href="/" class="btn-secondary w-full">
-            ← Volver al dashboard
-          </a>
-
-          <form
-            method="post"
-            action="/cases/{{ case.id }}/delete"
-            onsubmit="return confirm('¿Seguro que deseas eliminar este caso quirúrgico? Esta acción no se puede deshacer.');"
-            class="form mt-2"
-          >
-            <button type="submit" class="btn-danger w-full">
-              Eliminar caso (solo pruebas)
-            </button>
-          </form>
-        </div>
-      </section>
-    </section>
-
-    <!-- Tabla de tareas -->
+  <section class="grid grid-detail">
+    <!-- Resumen del caso -->
     <section class="card">
-      <h2 class="card-title">Plan quirúrgico detallado</h2>
-      <p class="card-subtitle">
-        Este plan ha sido generado automáticamente por el agente Planificador
-        (usando Gemini cuando está disponible). Cada tarea representa una fase
-        específica del flujo perioperatorio.
-      </p>
+      <h2 class="card-title">Datos del paciente</h2>
 
-      {% if case.tasks %}
-      <div class="table-wrapper">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Id tarea</th>
-              <th>Nombre</th>
-              <th>Estado</th>
-              <th>Quirófano</th>
-              <th>Inicio programado</th>
-              <th>Fin programado</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for task in case.tasks %}
-            <tr>
-              <td class="mono">{{ task.id }}</td>
-              <td>{{ task.name }}</td>
-              <td>
-                <span class="status-pill status-{{ task.status.value }}">
-                  {{ task.status.value }}
-                </span>
-              </td>
-              <td class="mono">
-                {{ task.or_room_id if task.or_room_id else "Sin asignar" }}
-              </td>
-              <td class="mono">
-                {{ task.scheduled_start.strftime("%Y-%m-%d %H:%M") if task.scheduled_start else "" }}
-              </td>
-              <td class="mono">
-                {{ task.scheduled_end.strftime("%Y-%m-%d %H:%M") if task.scheduled_end else "" }}
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      {% else %}
-      <p class="empty-state">
-        No se han generado tareas para este caso.
-      </p>
-      {% endif %}
+      <dl class="detail-list">
+        <div class="detail-row">
+          <dt>Paciente</dt>
+          <dd>{{ case.patient_name }}</dd>
+        </div>
+        <div class="detail-row">
+          <dt>Procedimiento</dt>
+          <dd>{{ case.procedure_name }}</dd>
+        </div>
+        <div class="detail-row">
+          <dt>Prioridad</dt>
+          <dd>{{ case.priority.value }}</dd>
+        </div>
+        <div class="detail-row">
+          <dt>Fecha/hora solicitadas</dt>
+          <dd class="mono">
+            {{ case.requested_datetime.strftime("%Y-%m-%d %H:%M") if case.requested_datetime else "" }}
+          </dd>
+        </div>
+        <div class="detail-row">
+          <dt>Creado</dt>
+          <dd class="mono">
+            {{ case.created_at.strftime("%Y-%m-%d %H:%M") if case.created_at else "" }}
+          </dd>
+        </div>
+        <div class="detail-row">
+          <dt>Última actualización</dt>
+          <dd class="mono">
+            {{ case.updated_at.strftime("%Y-%m-%d %H:%M") if case.updated_at else "" }}
+          </dd>
+        </div>
+      </dl>
     </section>
-  </main>
 
-  <footer class="app-footer">
-    <p>Gestor de Cirugías Multitagente · Detalle de caso</p>
-  </footer>
-</body>
-</html>
+    <!-- Acciones -->
+    <section class="card">
+      <h2 class="card-title">Acciones sobre el caso</h2>
+      <p class="card-subtitle">
+        Controla la programación del quirófano y gestiona el caso durante el ciclo perioperatorio.
+      </p>
+
+      <div class="space-y">
+        {% if has_unassigned_tasks %}
+        <form method="post" action="/cases/{{ case.id }}/schedule" class="form">
+          <button type="submit" class="btn-primary w-full">
+            Programar en quirófano
+          </button>
+        </form>
+        {% else %}
+        <p class="info-text">
+          Todas las subtareas tienen quirófano asignado. El Monitor actualizará
+          los estados conforme avance el tiempo.
+        </p>
+        {% endif %}
+
+        <a href="/" class="btn-secondary w-full">
+          ← Volver al dashboard
+        </a>
+
+        <form
+          method="post"
+          action="/cases/{{ case.id }}/delete"
+          onsubmit="return confirm('¿Seguro que deseas eliminar este caso quirúrgico? Esta acción no se puede deshacer.');"
+          class="form mt-2"
+        >
+          <button type="submit" class="btn-danger w-full">
+            Eliminar caso
+          </button>
+        </form>
+      </div>
+    </section>
+  </section>
+
+  <!-- Tabla de tareas -->
+  <section class="card">
+    <h2 class="card-title">Plan quirúrgico detallado</h2>
+    <p class="card-subtitle">
+      Plan generado automáticamente por el agente Planificador
+      (usando Gemini cuando está disponible). Cada fila representa una fase
+      específica del flujo perioperatorio.
+    </p>
+
+    {% if case.tasks %}
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Id tarea</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th>Quirófano</th>
+            <th>Inicio programado</th>
+            <th>Fin programado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for task in case.tasks %}
+          <tr>
+            <td class="mono">{{ task.id }}</td>
+            <td>{{ task.name }}</td>
+            <td>
+              <span class="status-pill status-{{ task.status.value }}">
+                {{ task.status.value }}
+              </span>
+            </td>
+            <td class="mono">
+              {{ task.or_room_id if task.or_room_id else "Sin asignar" }}
+            </td>
+            <td class="mono">
+              {{ task.scheduled_start.strftime("%Y-%m-%d %H:%M") if task.scheduled_start else "" }}
+            </td>
+            <td class="mono">
+              {{ task.scheduled_end.strftime("%Y-%m-%d %H:%M") if task.scheduled_end else "" }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="empty-state">
+      No se han generado tareas para este caso.
+    </p>
+    {% endif %}
+  </section>
+{% endblock %}

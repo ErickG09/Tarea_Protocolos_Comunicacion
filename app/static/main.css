@@ -1,5 +1,4 @@
-/* === Reset básico === */
-
+/* Reset básico */
 *,
 *::before,
 *::after {
@@ -16,64 +15,184 @@ body {
   color: #f9fafb;
 }
 
-/* === Layout general === */
+/* =========================================================
+   Layout general
+   ========================================================= */
 
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
-  backdrop-filter: blur(16px);
-  background: linear-gradient(
-    to right,
-    rgba(15, 23, 42, 0.9),
-    rgba(15, 23, 42, 0.6)
-  );
-}
-
-.app-header-left {
+.app-body {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
 }
 
-.app-header-right {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: flex-end;
-}
-
-.app-title {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.app-subtitle {
-  margin: 0;
-  font-size: 0.875rem;
-  color: #9ca3af;
+/* Contenedor principal */
+.layout {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 1.75rem auto 2.25rem;
+  padding: 0 1.5rem;
 }
 
 .app-main {
-  max-width: 1200px;
-  margin: 1.5rem auto 2rem;
-  padding: 0 1rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
+/* Footer global */
+.footer,
 .app-footer {
-  text-align: center;
-  padding: 1rem 0 1.5rem;
+  padding: 1rem 1.5rem 1.5rem;
   font-size: 0.75rem;
   color: #6b7280;
 }
 
-/* === Grid y tarjetas === */
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  border-top: 1px solid rgba(148, 163, 184, 0.25);
+  padding-top: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.footer-meta {
+  opacity: 0.85;
+}
+
+/* =========================================================
+   Topbar
+   ========================================================= */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(18px);
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.96),
+    rgba(15, 23, 42, 0.88),
+    rgba(15, 23, 42, 0.92)
+  );
+  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+}
+
+.topbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.9rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 20%, #38bdf8, #1d4ed8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #e5f4ff;
+  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.6);
+}
+
+.topbar-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.topbar-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.topbar-subtitle {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.topbar-link {
+  position: relative;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  color: #e5e7eb;
+  text-decoration: none;
+  border: 1px solid transparent;
+  opacity: 0.9;
+  transition: background 0.12s ease, border-color 0.12s ease,
+    opacity 0.12s ease, transform 0.08s ease;
+}
+
+.topbar-link:hover {
+  background: rgba(30, 64, 175, 0.45);
+  border-color: rgba(129, 140, 248, 0.95);
+  opacity: 1;
+  transform: translateY(-0.5px);
+}
+
+.topbar-link.is-active {
+  background: radial-gradient(circle at top left, #3b82f6, #6366f1);
+  border-color: rgba(129, 140, 248, 1);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.6);
+}
+
+/* =========================================================
+   Encabezado de página (debajo del topbar)
+   ========================================================= */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.page-subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.page-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* =========================================================
+   Tarjetas y grid
+   ========================================================= */
 
 .grid {
   display: grid;
@@ -89,6 +208,24 @@ body {
   .grid,
   .grid-detail {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .topbar-inner {
+    padding-inline: 1rem;
+  }
+
+  .layout {
+    padding-inline: 1rem;
+  }
+
+  .footer,
+  .app-footer {
+    padding-inline: 1rem;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
@@ -113,7 +250,16 @@ body {
   color: #9ca3af;
 }
 
-/* === Badges === */
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* =========================================================
+   Badges y estados
+   ========================================================= */
 
 .env-badge {
   display: inline-flex;
@@ -175,7 +321,9 @@ body {
   color: #bbf7d0;
 }
 
-/* === Formularios === */
+/* =========================================================
+   Formularios
+   ========================================================= */
 
 .form {
   display: flex;
@@ -221,7 +369,9 @@ body {
   margin-top: 0.75rem;
 }
 
-/* === Botones === */
+/* =========================================================
+   Botones
+   ========================================================= */
 
 button {
   font-family: inherit;
@@ -302,11 +452,13 @@ button {
   cursor: pointer;
   margin-right: 0.25rem;
   margin-top: 0.2rem;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
 }
 
 .btn-chip:hover {
   background: rgba(37, 99, 235, 0.35);
   border-color: rgba(59, 130, 246, 0.9);
+  transform: translateY(-0.3px);
 }
 
 .btn-link {
@@ -317,6 +469,14 @@ button {
 
 .btn-link:hover {
   text-decoration: underline;
+}
+
+/* Filtro de logs activo reutilizando chip */
+.log-filter.is-active {
+  background: radial-gradient(circle at top left, #3b82f6, #6366f1);
+  border-color: rgba(129, 140, 248, 1);
+  color: #f9fafb;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.7);
 }
 
 /* Utilidades */
@@ -333,7 +493,9 @@ button {
   margin-top: 0.75rem;
 }
 
-/* === Chips === */
+/* =========================================================
+   Chips generales
+   ========================================================= */
 
 .chips-row {
   display: flex;
@@ -351,7 +513,9 @@ button {
   background: rgba(15, 23, 42, 0.8);
 }
 
-/* === Tablas === */
+/* =========================================================
+   Tablas
+   ========================================================= */
 
 .table-wrapper {
   margin-top: 0.75rem;
@@ -398,7 +562,9 @@ button {
   text-align: right;
 }
 
-/* === Stats === */
+/* =========================================================
+   Stats
+   ========================================================= */
 
 .stats-grid {
   display: grid;
@@ -430,7 +596,9 @@ button {
   font-size: 0.8rem;
 }
 
-/* === Notificaciones === */
+/* =========================================================
+   Notificaciones
+   ========================================================= */
 
 .notification-list {
   list-style: none;
@@ -459,12 +627,16 @@ button {
   color: #e5e7eb;
 }
 
-.notification-empty {
-  font-size: 0.8rem;
+.notification-empty,
+.empty-state {
+  font-size: 0.85rem;
   color: #9ca3af;
+  margin-top: 0.5rem;
 }
 
-/* === Detail list === */
+/* =========================================================
+   Detail list
+   ========================================================= */
 
 .detail-list {
   margin: 0.5rem 0 0;
@@ -493,19 +665,14 @@ button {
   text-align: right;
 }
 
-/* === Otros === */
+/* =========================================================
+   Utilidades varias
+   ========================================================= */
 
 .section-subtitle {
   margin: 0.9rem 0 0.4rem;
   font-size: 0.85rem;
   color: #e5e7eb;
-}
-
-.notification-empty,
-.empty-state {
-  font-size: 0.85rem;
-  color: #9ca3af;
-  margin-top: 0.5rem;
 }
 
 .mono {
@@ -522,4 +689,109 @@ button {
   margin-top: 0.3rem;
   display: flex;
   flex-wrap: wrap;
+}
+
+/* =========================================================
+   Visor de logs
+   ========================================================= */
+
+.log-viewer {
+  margin-top: 0.4rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(30, 64, 175, 0.95);
+  background: radial-gradient(circle at top left, #020617, #020617);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.7);
+  max-height: 480px;
+  overflow: auto;
+}
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.log-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: linear-gradient(to right, #020617, #111827);
+  border-bottom: 1px solid rgba(55, 65, 81, 0.95);
+}
+
+.log-table th,
+.log-table td {
+  padding: 0.5rem 0.65rem;
+  text-align: left;
+}
+
+.log-table th {
+  font-weight: 500;
+  color: #cbd5f5;
+}
+
+.log-row:nth-child(odd) {
+  background-color: rgba(15, 23, 42, 0.95);
+}
+
+.log-row:nth-child(even) {
+  background-color: rgba(15, 23, 42, 0.9);
+}
+
+.log-row:hover {
+  background-color: rgba(30, 64, 175, 0.5);
+}
+
+.col-time {
+  width: 180px;
+}
+
+.col-level {
+  width: 90px;
+}
+
+.col-message {
+  width: auto;
+}
+
+/* Niveles de log */
+.log-level {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.log-level-info {
+  background: rgba(59, 130, 246, 0.18);
+  color: #bfdbfe;
+  border: 1px solid rgba(59, 130, 246, 0.65);
+}
+
+.log-level-warning {
+  background: rgba(234, 179, 8, 0.18);
+  color: #fde68a;
+  border: 1px solid rgba(234, 179, 8, 0.7);
+}
+
+.log-level-error {
+  background: rgba(220, 38, 38, 0.2);
+  color: #fecaca;
+  border: 1px solid rgba(248, 113, 113, 0.85);
+}
+
+.log-message {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Fila de filtros encima del visor de logs */
+.log-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
 }
